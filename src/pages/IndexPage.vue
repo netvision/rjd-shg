@@ -1,5 +1,22 @@
 <template>
   <q-page class="flex flex-top justify-center">
+    <div class="q-pa-md">
+      <h3 class="text-h4">Aggregates</h3>
+      <div class="q-pa-md text-left">
+        <p>Contribution Recieved: &#8377;{{ totals.contribution }}</p>
+        <p>Loan Distributed: &#8377;{{ -totals.totalLoan }}</p>
+        <p>Loan Recovered: &#8377;{{ totals.loan - totals.totalLoan }}</p>
+        <p>Interest: &#8377;{{ totals.interest }}</p>
+        <p>Penalty: &#8377;{{ totals.penalty }}</p>
+        <q-separator />
+        <p>
+          Cash in hand: &#8377;{{
+            totals.contribution + totals.loan + totals.interest + totals.penalty
+          }}
+        </p>
+        <q-separator />
+      </div>
+    </div>
     <q-list separator class="q-pa-md rounded-borders">
       <q-expansion-item v-for="member in groupMembers" :key="member.id">
         <template v-slot:header>
@@ -99,5 +116,11 @@ onMounted(async () => {
       penalty: 0,
     }
   );
+  let totalLoan = res
+    .filter((tr) => tr.loan_emi < 0)
+    .reduce((t, c) => {
+      return t + c.loan_emi;
+    }, 0);
+  totals.value.totalLoan = totalLoan;
 });
 </script>
