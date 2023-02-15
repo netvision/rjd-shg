@@ -14,6 +14,7 @@
             totals.contribution + totals.loan + totals.interest + totals.penalty
           }}
         </p>
+        <p class="text-orange-5">Loan Pending: &#8377;{{ totals.loan }}</p>
         <q-separator />
       </div>
     </div>
