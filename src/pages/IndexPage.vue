@@ -32,7 +32,7 @@
         </template>
 
         <q-card>
-          <q-card-section>
+          <q-card-section class="q-pa-md">
             <q-table
               :title="member.name + '\'s contributions'"
               :rows="member.transactions"
