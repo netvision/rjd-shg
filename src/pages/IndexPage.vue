@@ -66,7 +66,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { api } from "../boot/axios";
+import { api, axios } from "../boot/axios";
+import { useRoute } from "vue-router";
+const route = useRoute();
 
 const totals = ref({});
 const groupMembers = ref([]);
