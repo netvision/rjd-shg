@@ -1,6 +1,8 @@
 <template>
-  <div class="full-height column q-pa-xl">
-    <q-btn @click="signIn" label="Sign In With Google" class="self-center" />
+  <div class="fullscreen relative-position">
+    <div class="absolute-center">
+      <q-btn @click="signIn" label="Sign In With Google" class="self-center" />
+    </div>
   </div>
 </template>
 <script setup>

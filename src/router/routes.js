@@ -13,6 +13,16 @@ const routes = [
         component: () => import("pages/AddTransaction.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "add-loan",
+        component: () => import("pages/AddLoan.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "add-member",
+        component: () => import("src/pages/NewMember.vue"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
 
