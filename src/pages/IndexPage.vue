@@ -132,7 +132,10 @@
                             v-if="user && user.email === 'rakesh@jangid.co.in'"
                         /></span>
                       </q-item-section>
-                      <q-item-section side>
+                      <q-item-section
+                        side
+                        v-if="user && user.email === 'rakesh@jangid.co.in'"
+                      >
                         <span
                           ><q-btn
                             flat
@@ -161,7 +164,7 @@
         <q-card-section>
           <div class="text-h6 text-center">
             {{
-              curMember && curMember.name
+              curMember && curMember.id
                 ? "Edit " + curMember?.name
                 : "Add New Member"
             }}
