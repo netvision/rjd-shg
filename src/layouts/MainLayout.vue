@@ -3,39 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title> Self Help group </q-toolbar-title>
-        <q-fab
-          icon="add"
-          outline
-          square
-          dense
-          direction="down"
-          label="Add"
-          v-if="user && user.is_admin"
-          vertical-actions-align="left"
-          padding="xs"
-        >
-          <q-fab-action
-            square
-            color="primary"
-            to="/add-member"
-            label="New Member"
-            icon="person_add"
-          />
-          <q-fab-action
-            square
-            color="primary"
-            to="/add-transaction"
-            label="Reciept"
-            icon="event_repeat"
-          />
-          <q-fab-action
-            square
-            color="primary"
-            to="/add-loan"
-            label="Loan"
-            icon="currency_rupee"
-          />
-        </q-fab>
+
         <q-btn outline dense icon="home" to="/" class="q-mx-md" />
         <q-avatar v-if="user" class="q-mx-md">
           <img :src="user.photoURL" />
@@ -56,9 +24,6 @@ import { useRouter } from "vue-router";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 const router = useRouter();
 const user = ref();
-
-const fabPos = ref([50, 50]);
-const draggingFab = ref(false);
 
 const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
@@ -87,6 +52,7 @@ const logout = () => {
 
 onMounted(async () => {
   user.value = await getCurrentUser();
+  console.log(user.value);
   let is_admin = [
     "rakesh@jangid.co.in",
     "jitendra.saini@dalmiatrusts.in",
