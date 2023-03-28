@@ -129,12 +129,24 @@
                             flat
                             icon="edit"
                             @click="editMember(member)"
-                            v-if="user && user.email === 'rakesh@jangid.co.in'"
+                            v-if="
+                              user &&
+                              [
+                                'rakesh@jangid.co.in',
+                                'udaibhan39@gmail.com',
+                              ].includes(user.email)
+                            "
                         /></span>
                       </q-item-section>
                       <q-item-section
                         side
-                        v-if="user && user.email === 'rakesh@jangid.co.in'"
+                        v-if="
+                          user &&
+                          [
+                            'rakesh@jangid.co.in',
+                            'udaibhan39@gmail.com',
+                          ].includes(user.email)
+                        "
                       >
                         <span
                           ><q-btn
