@@ -450,7 +450,9 @@ const getData = async () => {
   let members = await api
     .get("shg-member?expand=transactions")
     .then((r) => r.data);
+
   members.forEach((member) => {
+    member.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     member.totals = member.transactions.reduce(
       (a, b) => {
         a.interest += b.interest_amt;
