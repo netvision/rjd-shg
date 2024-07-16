@@ -6,7 +6,7 @@ const routes = [
       {
         path: "",
         component: () => import("pages/IndexPage.vue"),
-        // meta: { requiresAuth: true },
+        meta: { requiresAuth: true },
       },
       {
         path: "add-transaction",
