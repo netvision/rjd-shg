@@ -53,7 +53,7 @@
           ></q-input>
         </div>
       </div>
-      <div class="row" v-if="curStatus.loan < 0">
+      <div class="row">
         <div class="col q-pa-md">
           <q-input
             type="number"
