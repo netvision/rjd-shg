@@ -2,61 +2,50 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-toolbar-title> Self Help group </q-toolbar-title>
-
-        <q-btn outline dense icon="home" to="/" class="q-mx-md" />
-        <q-avatar v-if="user" class="q-mx-md">
-          <img :src="user.photoURL" />
-        </q-avatar>
-
-        <q-btn v-if="user" flat dense icon="logout" @click="logout" />
+        <q-toolbar-title>Self Help Group</q-toolbar-title>
+        <q-btn
+          outline
+          dense
+          icon="home"
+          to="/"
+          class="q-mx-md"
+          aria-label="Home"
+        />
+        <span v-if="user" class="q-mr-md">{{ user.username }}</span>
+        <q-btn
+          v-if="user"
+          flat
+          dense
+          icon="logout"
+          @click="signOut"
+          :loading="busy"
+          aria-label="Sign out"
+        />
       </q-toolbar>
     </q-header>
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+    <q-page-container><router-view /></q-page-container>
   </q-layout>
 </template>
-
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { useQuasar } from "quasar";
+import { user, logout } from "../boot/session";
 const router = useRouter();
-const user = ref();
-
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const removeListener = onAuthStateChanged(
-      getAuth(),
-      (user) => {
-        removeListener();
-        resolve(user);
-      },
-      reject
-    );
-  });
-};
-
-const logout = () => {
-  const auth = getAuth();
-  signOut(auth)
-    .then(() => {
-      alert("logged out");
-      router.push("/login");
-    })
-    .catch((error) => {
-      alert(error.message);
+const $q = useQuasar();
+const busy = ref(false);
+async function signOut() {
+  busy.value = true;
+  try {
+    await logout();
+    await router.replace("/login");
+  } catch {
+    $q.notify({
+      type: "negative",
+      message: "Sign out failed. Please try again.",
     });
-};
-
-onMounted(async () => {
-  user.value = await getCurrentUser();
-  console.log(user.value);
-  let is_admin = [
-    "rakesh@jangid.co.in",
-    "jitendra.saini@dalmiatrusts.in",
-  ].includes(user.value.email);
-  user.value.is_admin = is_admin;
-});
+  } finally {
+    busy.value = false;
+  }
+}
 </script>

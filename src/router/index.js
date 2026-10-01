@@ -6,21 +6,7 @@ import {
   createWebHashHistory,
 } from "vue-router";
 import routes from "./routes";
-import auth from "../boot/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const removeListener = onAuthStateChanged(
-      auth,
-      (user) => {
-        removeListener();
-        resolve(user);
-      },
-      reject
-    );
-  });
-};
+import { restoreSession } from "../boot/session";
 
 /*
  * If not building with SSR mode, you can
@@ -48,12 +34,14 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  Router.beforeEach(async (to, from, next) => {
-    if (to.meta.requiresAuth) {
-      if (await getCurrentUser()) next();
-      else next("/login");
-    } else {
-      next();
+  Router.beforeEach(async (to) => {
+    if (!to.meta.requiresAuth) return true;
+    try {
+      const current = await restoreSession();
+      if (!current || current.must_change_password) return "/login";
+      return true;
+    } catch {
+      return "/login";
     }
   });
 

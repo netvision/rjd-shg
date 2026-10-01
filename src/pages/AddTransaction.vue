@@ -163,7 +163,7 @@
 <script setup>
 import { ref, reactive, watch, onMounted } from "vue";
 import { date, useQuasar } from "quasar";
-import { api } from "../boot/axios";
+import { api, getMembers } from "../boot/axios";
 const members = ref([]);
 const member = ref();
 const lastTransaction = ref();
@@ -259,9 +259,7 @@ const saveReceipt = async () => {
 };
 
 onMounted(async () => {
-  members.value = await api
-    .get("shg-member?expand=transactions")
-    .then((r) => r.data);
+  members.value = await getMembers();
 
   //member.value = members.value[0];
 });

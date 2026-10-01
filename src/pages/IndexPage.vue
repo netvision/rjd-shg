@@ -72,10 +72,7 @@
         <q-list separator class="q-pa-md rounded-borders bg-blue-1">
           <q-item>
             <q-item-section class="text-h5"> Members Status</q-item-section>
-            <q-item-section
-              side
-              v-if="user && user.email === 'rakesh@jangid.co.in'"
-            >
+            <q-item-section side v-if="user && !user.must_change_password">
               <q-btn
                 flat
                 label="Add Member"
@@ -129,24 +126,12 @@
                             flat
                             icon="edit"
                             @click="editMember(member)"
-                            v-if="
-                              user &&
-                              [
-                                'rakesh@jangid.co.in',
-                                'udaibhan39@gmail.com',
-                              ].includes(user.email)
-                            "
+                            v-if="user && !user.must_change_password"
                         /></span>
                       </q-item-section>
                       <q-item-section
                         side
-                        v-if="
-                          user &&
-                          [
-                            'rakesh@jangid.co.in',
-                            'udaibhan39@gmail.com',
-                          ].includes(user.email)
-                        "
+                        v-if="user && !user.must_change_password"
                       >
                         <span
                           ><q-btn
@@ -333,14 +318,14 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { api } from "../boot/axios";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { api, getMembers } from "../boot/axios";
+import { user } from "../boot/session";
 import NewReceipt from "./../components/NewReceipt.vue";
 import { date, useQuasar } from "quasar";
 const $q = useQuasar();
 const totals = ref({});
 const groupMembers = ref([]);
-const user = ref({});
+
 const recentTransactions = ref([]);
 const recieptModal = ref(false);
 const columns = ref([
@@ -358,8 +343,7 @@ const newReciept = (member) => {
 
 const memberModal = ref(false);
 const editMember = (member) => {
-  curMember.value = member;
-  console.log(curMember.value);
+  curMember.value = { ...member };
   memberModal.value = true;
 };
 
@@ -378,6 +362,7 @@ const saveMember = async () => {
     $q.notify("Updated successfully");
     curMember.value = {};
     memberModal.value = false;
+    await getData();
   } else if (res.status == 201) {
     $q.notify("new member added successfully");
     groupMembers.value.push({ ...res.data, totals: {}, transactions: [] });
@@ -402,8 +387,10 @@ const cancelLoan = () => {
 
 const saveLoan = async () => {
   loan.value.member_id = curMember.value.id;
-  loan.value.loan_emi = -loan.value.loan_emi;
-  let res = await api.post("shg-transactions-logs", loan.value);
+  let res = await api.post("shg-transactions-logs", {
+    ...loan.value,
+    loan_emi: -Math.abs(loan.value.loan_emi),
+  });
   if (res.status == "201") {
     $q.notify("transaction updated successfully");
     recentTransactions.value.push({ ...res.data, member: curMember.value });
@@ -411,19 +398,6 @@ const saveLoan = async () => {
     loanModal.value = false;
     getData();
   } else $q.notify(res.statusText);
-};
-
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const removeListener = onAuthStateChanged(
-      getAuth(),
-      (user) => {
-        removeListener();
-        resolve(user);
-      },
-      reject
-    );
-  });
 };
 
 const updatePage = (done) => {
@@ -447,9 +421,7 @@ const delTrn = async (trn) => {
   }
 };
 const getData = async () => {
-  let members = await api
-    .get("shg-member?expand=transactions")
-    .then((r) => r.data);
+  let members = await getMembers();
 
   members.forEach((member) => {
     member.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -493,8 +465,6 @@ const getData = async () => {
 };
 
 onMounted(async () => {
-  user.value = await getCurrentUser();
-
   getData();
 });
 </script>
