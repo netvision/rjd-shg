@@ -100,6 +100,7 @@ const $q = useQuasar();
 const curDate = ref(new Date());
 
 const newTrn = reactive({
+  member_id: props.member.id,
   date: date.formatDate(new Date(), "YYYY-MM-DD"),
   contribution: 500,
   loan_emi: 0,
@@ -138,14 +139,10 @@ const calcTrn = () => {
         ? loan_emi
         : Math.abs(curStatus.value.loan);
   } else {
-    (newTrn.tranDate = date.formatDate(new Date(), "YYYY-MM-DD")),
-      (newTrn.interest_amt = 0);
+    newTrn.interest_amt = 0;
     newTrn.loan_emi = 0;
   }
   newTrn.contribution = monthDiff > 0 ? monthDiff * 500 : 0;
-
-  newTrn.member_id = member.value.id;
-  console.log(newTrn);
 };
 
 const emit = defineEmits("done");
